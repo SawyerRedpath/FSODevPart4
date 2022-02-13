@@ -56,9 +56,30 @@ test('valid blog post successfully creates blog', async () => {
       })
     ])
   )
-
-
 })
+
+describe('delete functionality', () => {
+  test('succeeds with status 204 if id is valid', async () => {
+
+    const blogsBeforeDelete = await helper.blogsInDb()
+    const blogToDelete = blogsBeforeDelete[0]
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+    const blogsAfterDelete = await helper.blogsInDb()
+
+    expect(blogsAfterDelete).toHaveLength(blogsBeforeDelete.length - 1)
+
+    expect(blogsAfterDelete).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ...blogToDelete
+        })
+      ])
+    )
+  })
+})
+
 
 afterAll(() => {
   mongoose.connection.close()
