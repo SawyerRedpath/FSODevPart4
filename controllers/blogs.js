@@ -3,21 +3,23 @@ const Blog = require('../models/blog')
 
 blogsRouter.get('/', async (request, response) => {
 
-  const blogs = Blog.find({})
+  const blogs = await Blog.find({})
   response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
+  const blog = new Blog({
+    title: request.body.title,
+    author: request.body.author,
+    url: request.body.url,
+    likes: request.body.likes
+  })
 
   const savedBlog = await blog.save()
-  response.status(201).json(savedBlog)
+  response.status(201)
+  response.json(savedBlog)
 
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result)
-    })
+
 })
 
 module.exports = blogsRouter
