@@ -78,6 +78,18 @@ describe('delete functionality', () => {
       ])
     )
   })
+
+  test('fails with status 404 if id does not exist, but is valid', async () => {
+    const validButNonExistingId = await helper.nonExistingId()
+
+    await api.delete(`/api/blogs/${validButNonExistingId}`).expect(404)
+  })
+
+  test('fails with status 400 if id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    await api.delete(`/api/blogs/${invalidId}`).expect(400)
+  })
 })
 
 
