@@ -92,6 +92,49 @@ describe('delete functionality', () => {
   })
 })
 
+describe('put functionality', () => {
+
+  test('incrementing likes succeeds with 204 if valid', async () => {
+    const blogsBeforeUpdate = await helper.blogsInDb()
+    const blogToUpdate = blogsBeforeUpdate[0]
+
+    const updatedBlog = {
+      ...blogToUpdate,
+      likes: blogToUpdate.likes + 1
+    }
+
+    await api.put(`/api/blogs/${blogToUpdate.id}`).send(updatedBlog).expect(204)
+
+  })
+
+  test('fails with status 404 if id does not exist, but is valid', async () => {
+    const validButNonExistingId = await helper.nonExistingId()
+
+    const blog = {
+      title: 'valid blog',
+      author: 'valid author',
+      url: 'valudurl.com',
+      likes: 0
+    }
+
+    await api.put(`/api/blogs/${validButNonExistingId}`).send(blog).expect(404)
+  })
+
+  test('fails with status 400 if id is not valid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    const blog = {
+      title: 'valid blog',
+      author: 'valid author',
+      url: 'valudurl.com',
+      likes: 0
+    }
+
+    await api.put(`/api/blogs/${invalidId}`).send(blog).expect(400)
+
+  })
+})
+
 
 afterAll(() => {
   mongoose.connection.close()
